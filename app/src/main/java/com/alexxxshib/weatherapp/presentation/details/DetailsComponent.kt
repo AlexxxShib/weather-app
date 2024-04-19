@@ -1,0 +1,3 @@
+package com.alexxxshib.weatherapp.presentation.details
+
+interface DetailsComponent

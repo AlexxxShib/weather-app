@@ -1,0 +1,3 @@
+package com.alexxxshib.weatherapp.presentation.search
+
+interface SearchComponent
