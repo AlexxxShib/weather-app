@@ -13,6 +13,15 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val apiService = ApiFactory.apiService
+
+        CoroutineScope(Dispatchers.Main).launch {
+            Log.d("MainActivity", apiService.loadCurrentWeather("London").toString())
+            Log.d("MainActivity", apiService.loadForecast("London").toString())
+            Log.d("MainActivity", apiService.searchCity("London").joinToString { it.toString() })
+        }
+
         setContent {
             WeatherAppTheme {
 
