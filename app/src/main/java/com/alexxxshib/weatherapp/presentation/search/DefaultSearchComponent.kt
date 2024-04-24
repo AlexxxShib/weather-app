@@ -6,18 +6,20 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class DefaultSearchComponent @Inject constructor(
-    componentContext: ComponentContext,
-    private val openReason: OpenReason,
+class DefaultSearchComponent @AssistedInject constructor(
     private val storeFactory: SearchStoreFactory,
-    private val onBackClicked: () -> Unit,
-    private val onForecastRequested: (City) -> Unit,
-    private val onCitySavedToFavourite: () -> Unit
+    @Assisted("openReason") private val openReason: OpenReason,
+    @Assisted("onBackClicked") private val onBackClicked: () -> Unit,
+    @Assisted("onForecastRequested") private val onForecastRequested: (City) -> Unit,
+    @Assisted("onCitySavedToFavourite") private val onCitySavedToFavourite: () -> Unit,
+    @Assisted("componentContext") componentContext: ComponentContext
 ) : SearchComponent, ComponentContext by componentContext {
 
     private val store = instanceKeeper.getStore { storeFactory.create(openReason) }
@@ -60,5 +62,17 @@ class DefaultSearchComponent @Inject constructor(
 
     override fun onClickCity(city: City) {
         store.accept(SearchStore.Intent.ClickCity(city))
+    }
+
+    @AssistedFactory
+    interface Factory {
+
+        fun create(
+            @Assisted("openReason") openReason: OpenReason,
+            @Assisted("onBackClicked") onBackClicked: () -> Unit,
+            @Assisted("onForecastRequested") onForecastRequested: (City) -> Unit,
+            @Assisted("onCitySavedToFavourite") onCitySavedToFavourite: () -> Unit,
+            @Assisted("componentContext") componentContext: ComponentContext
+        ): DefaultSearchComponent
     }
 }
